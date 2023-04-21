@@ -24,14 +24,17 @@ namespace GILES
 		{
 			gizmoLookup = new Dictionary<Type, Type>();
 
-			foreach(Type t in BuiltinGizmos)
-			{
-				 pb_GizmoAttribute attrib = (pb_GizmoAttribute) ((IEnumerable<Attribute>) t.GetCustomAttributes(true)).FirstOrDefault(x => x is pb_GizmoAttribute);
-
-				 if(attrib != null)
-					gizmoLookup.Add(attrib.type, t);
-			}
-		}
+            foreach (Type t in BuiltinGizmos)
+            {
+                var att = (t.GetCustomAttributes(true)).FirstOrDefault(x => x is pb_GizmoAttribute);
+                if (att != null)
+                {
+                    pb_GizmoAttribute attrib = (pb_GizmoAttribute)att;
+                    if (attrib != null)
+                        gizmoLookup.Add(attrib.type, t);
+                }
+            }
+        }
 
 		/**
 		 * Register with pb_Scene delegates so that this script can apply gizmos when new

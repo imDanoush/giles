@@ -121,25 +121,32 @@ namespace GILES.Interface
 				previewImage = null;
 			}
 
-			gameObject.AddComponent<Mask>();
+			//gameObject.AddComponent<Mask>();
 			gameObject.AddComponent<VerticalLayoutGroup>();
 			Image image = gameObject.DemandComponent<Image>();
 			image.color = pb_GUIUtility.ITEM_BACKGROUND_COLOR;
 			image.sprite = null;
 
-			GameObject description = gameObject.AddChild();
-
-			if(previewImage != null)
-			{
-				previewComponent = description.AddComponent<RawImage>();
-				previewComponent.texture = previewImage;
-			}
-			else
-			{
-				Text text = description.AddComponent<Text>();
-				text.font = pb_GUIUtility.DefaultFont();
-				text.alignment = TextAnchor.MiddleCenter;
-				text.text = asset.name;
+            if (previewComponent == null)
+            {
+				GameObject description = gameObject.AddChild();
+	                description.transform.localScale = Vector3.one;
+				if(previewImage != null)
+				{
+					previewComponent = description.AddComponent<RawImage>();
+					previewComponent.texture = previewImage;
+				}
+				else
+				{
+					Text text = description.AddComponent<Text>();
+					text.font = pb_GUIUtility.DefaultFont();
+					text.alignment = TextAnchor.MiddleCenter;
+					text.text = asset.name;
+                }
+            }
+            else
+            {
+                previewComponent.texture = previewImage;
 			}
 		}
 
@@ -201,6 +208,8 @@ namespace GILES.Interface
 		{
 			if(previewComponent == null)
 				return;
+            if (!SetupPreviewRender())
+                return;
 
 			doSpin = false;
 
@@ -247,8 +256,8 @@ namespace GILES.Interface
 
 			sceneLights = Object.FindObjectsOfType<Light>();
 			lightWasEnabled = new bool[sceneLights.Length];
-
-			instance = (GameObject) GameObject.Instantiate(asset, Vector3.zero, Quaternion.identity);
+            if(instance==null)
+				instance = (GameObject) GameObject.Instantiate(asset, Vector3.zero, Quaternion.identity);
 
 			Renderer renderer = instance.GetComponent<Renderer>();
 
@@ -268,22 +277,24 @@ namespace GILES.Interface
 
 		void RenderPreview()
 		{
-			for(int i = 0; i < sceneLights.Length; i++)
-			{
-				lightWasEnabled[i] = sceneLights[i].enabled;
-				sceneLights[i].enabled = false;
-			}
-
+            if (sceneLights != null)
+            {
+				for(int i = 0; i < sceneLights.Length; i++)
+				{
+					lightWasEnabled[i] = sceneLights[i].enabled;
+					sceneLights[i].enabled = false;
+				}
+            }
 			RenderTexture.active = renderTexture;
-
-			instance.SetActive(true);
+            if(instance)
+				instance.SetActive(true);
 
 			previewLightA.gameObject.SetActive(true);
 			previewLightB.gameObject.SetActive(true);
 
 			previewCamera.Render();
-
-			instance.SetActive(false);
+            if (instance)
+				instance.SetActive(false);
 
 			previewLightA.gameObject.SetActive(false);
 			previewLightB.gameObject.SetActive(false);

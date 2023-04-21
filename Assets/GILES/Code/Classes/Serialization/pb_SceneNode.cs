@@ -95,8 +95,12 @@ namespace GILES.Serialization
 			{
 				if(!t.gameObject.activeSelf)
 					continue;
-
-				children.Add( new pb_SceneNode(t.gameObject) );
+                if (t.transform.parent != null && t.transform.parent.GetComponent<pb_MetaDataComponent>().metadata.assetType == AssetType.Bundle)
+                {
+                    //如果是AssetBundle生成的物体的子物体，直接忽略
+                    continue;
+                }
+                children.Add( new pb_SceneNode(t.gameObject) );
 			}
 		}
 
@@ -114,7 +118,25 @@ namespace GILES.Serialization
 				foreach(pb_ISerializable serializedObject in components)
 					go.AddComponent(serializedObject);
 			}
-			else
+            else if (metadata.assetType == AssetType.Bundle)
+            {
+                //如果是AssetBundle内生成的，再重新生成一遍
+                //这里还需要把修改的值加载回来
+                AssetBundle ab = pb_AssetBundles.LoadAssetBundle(metadata.assetBundlePath.assetBundleName);
+
+                Debug.Log("===Bundle====assetBundleName : " + metadata.assetBundlePath.assetBundleName +
+                    "====filePath : " + metadata.assetBundlePath.filePath);
+
+                object sphereHead = ab.LoadAsset(metadata.assetBundlePath.filePath);
+                go = pb_Scene.Instantiate((GameObject)sphereHead);
+
+                go.name = metadata.assetBundlePath.filePath;
+
+                //如果是AssetBundle也应用一次组件变化修改
+                //对组件中变化的量重新赋值
+                metadata.componentDiff.ApplyPatch(go);
+            }
+            else
 			{
 				GameObject prefab = pb_ResourceManager.LoadPrefabWithMetadata(metadata);
 

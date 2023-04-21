@@ -35,9 +35,9 @@ namespace GILES.Interface
 				if(typeInspector == null)
 					continue;
 
-				IEnumerable<Attribute> typeAttribs = (IEnumerable<Attribute>) typeInspector.GetType().GetCustomAttributes(true);
-				inspectorLookup.Add(typeAttribs.Where(x => x != null && x is pb_TypeInspectorAttribute).Cast<pb_TypeInspectorAttribute>(), go);
-			}
+                var typeAttribs = typeInspector.GetType().GetCustomAttributes(true);
+                inspectorLookup.Add(typeAttribs.Where(x => x != null && x is pb_TypeInspectorAttribute).Cast<pb_TypeInspectorAttribute>(), go);
+            }
 		}
 
 		/**

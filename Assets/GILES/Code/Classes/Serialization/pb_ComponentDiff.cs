@@ -84,8 +84,8 @@ namespace GILES.Serialization
 		 */
 		public void ApplyPatch(GameObject target)
 		{
-			if(keys.Count < 1 || values.Count != keys.Count)
-				return;
+            if (keys == null || values == null || keys.Count < 1 || values.Count != keys.Count)
+                return;
 
 			modifiedValues = new Dictionary<Component, Dictionary<string, object>>();
 
@@ -97,8 +97,13 @@ namespace GILES.Serialization
 			for(int i = 0; i < entries; i++)
 			{
 				Component[] components = target.GetComponents(keys[i]);
-
-				if( dup_components.ContainsKey(keys[i]) )
+                if (components.Length == 0)
+                {
+                    //如果没有，说明是运行时动态加上去的组件，添加一个
+                    target.AddComponent(keys[i]);
+                }
+                components = target.GetComponents(keys[i]);
+                if ( dup_components.ContainsKey(keys[i]) )
 					dup_components[keys[i]]++;
 				else
 					dup_components.Add(keys[i], 0);
