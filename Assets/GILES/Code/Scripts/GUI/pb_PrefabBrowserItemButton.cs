@@ -213,12 +213,12 @@ namespace GILES.Interface
 
 			doSpin = false;
 
-			cameraRotation = previewCamera.transform.localRotation;
+			//cameraRotation = previewCamera.transform.localRotation;
 
-			RenderPreview();
+			//RenderPreview();
 
-			previewImage.ReadPixels(new Rect(0,0,renderTexture.width,renderTexture.height), 0, 0);
-			previewImage.Apply();
+			//previewImage.ReadPixels(new Rect(0,0,renderTexture.width,renderTexture.height), 0, 0);
+			//previewImage.Apply();
 
 			previewComponent.texture = previewImage;
 

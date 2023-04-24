@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using GILES;
-#if !UNITY_5_2
 using UnityEngine.SceneManagement;
-#endif
 
 namespace GILES.Example
 {
@@ -20,10 +18,24 @@ namespace GILES.Example
 
 		[HideInInspector] [SerializeField] private string json = null;
 
-		/**
+        protected override void Awake()
+        {
+            base.Awake();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            if (SceneManager.GetActiveScene().name == sceneToLoadLevelInto && !string.IsNullOrEmpty(json))
+                pb_Scene.LoadLevel(json);
+            else
+                Debug.Log("json is null or empty: " + string.IsNullOrEmpty(json));
+        }
+
+        /**
 		 * Call this to load level.
 		 */
-		public static void LoadScene(string path)
+        public static void LoadScene(string path)
 		{
 	 		string san = pb_FileUtility.SanitizePath(path, ".json");
 
@@ -40,10 +52,5 @@ namespace GILES.Example
 			SceneManager.LoadScene(instance.sceneToLoadLevelInto);
 		}
 
-		private void OnLevelWasLoaded(int i)
-		{
-			if( SceneManager.GetActiveScene().name == sceneToLoadLevelInto && !string.IsNullOrEmpty(json))
-				pb_Scene.LoadLevel(json);
-		}
 	}
 }

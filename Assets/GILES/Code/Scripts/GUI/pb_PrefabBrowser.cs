@@ -15,10 +15,10 @@ namespace GILES.Interface
 		{
 			prefabs = pb_ResourceManager.LoadAll<GameObject>().ToList();
 
-			foreach(GameObject go in prefabs)
+			foreach (GameObject go in prefabs)
 			{
 				GameObject icon = transform.gameObject.AddChild();
-				
+
 				pb_PrefabBrowserItemButton button = icon.AddComponent<pb_PrefabBrowserItemButton>();
 				button.asset = go;
 				button.Initialize();
