@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System;
@@ -46,7 +46,7 @@ namespace GILES.UnityEditor
 
 					GameObject go = obj as GameObject;
 
-					if(go != null && PrefabUtility.GetPrefabType(go) == PrefabType.Prefab)
+					if(go != null && PrefabUtility.GetPrefabAssetType(go) != PrefabAssetType.NotAPrefab)
 					{
 						pb_MetaDataComponent metadata = go.GetComponent<pb_MetaDataComponent>();
 
